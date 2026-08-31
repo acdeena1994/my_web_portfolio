@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>acdeena · Embedded Software Engineer</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Fonts: Space Grotesk (headings), Inter (body), JetBrains Mono (code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ===== CSS Custom Properties (design tokens) ===== */
+        :root {
+            --bg-off-white: #F8F9FA;
+            --bg-light: #F4F5F7;
+            --text-charcoal: #212529;
+            --text-soft: #343A40;
+            --accent-blue: #4A90E2;
+            --accent-hover: #3a7bc8;
+            --border-subtle: #e9ecef;
+            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.10);
+            --radius-card: 16px;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+            --nav-height: 72px;
+            --transition-smooth: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* ===== Reset / Base ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: var(--nav-height);
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-off-white);
+            color: var(--text-charcoal);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text-charcoal);
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color var(--transition-smooth);
+        }
+        a:hover {
+            color: var(--accent-hover);
+        }
+
+        code,
+        pre {
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+        }
+
+        /* ===== Scroll Progress Indicator ===== */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--accent-blue);
+            z-index: 9999;
+            transition: width 0.08s linear;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        /* ===== Navbar ===== */
+        .navbar-custom {
+            background: rgba(248, 249, 250, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 1px 20px rgba(0, 0, 0, 0.04);
+            padding: 0.5rem 0;
+            transition: box-shadow var(--transition-smooth);
+            min-height: var(--nav-height);
+        }
+        .navbar-custom.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+        .navbar-brand {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text-charcoal) !important;
+        }
+        .navbar-brand span {
+            color: var(--accent-blue);
+        }
+        .navbar-brand small {
+            font-weight: 400;
+            font-size: 0.7rem;
+            color: var(--text-soft);
+            display: inline-block;
+            margin-left: 4px;
+        }
+        .nav-link {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-soft) !important;
+            padding: 0.5rem 0.85rem !important;
+            border-radius: 8px;
+            transition: all var(--transition-smooth);
+            position: relative;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent-blue) !important;
+            background: rgba(74, 144, 226, 0.07);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 2px;
+            border-radius: 4px;
+            background: var(--accent-blue);
+        }
+        .navbar-toggler {
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            background: rgba(74, 144, 226, 0.06);
+        }
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        /* ===== Section common ===== */
+        section {
+            padding: 5rem 0;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
+        }
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-soft);
+            max-width: 640px;
+            margin: 0 auto 3rem auto;
+            font-weight: 400;
+        }
+        .section-divider {
+            width: 56px;
+            height: 3px;
+            background: var(--accent-blue);
+            border-radius: 8px;
+            margin: 0.75rem 0 1.5rem 0;
+        }
+        .section-divider.centered {
+            margin: 0.75rem auto 1.5rem auto;
+        }
+
+        /* ===== Hero ===== */
+        #hero {
+            padding: 7rem 0 5rem 0;
+            background: var(--bg-off-white);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.04) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        #hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-name {
+            font-size: 3.8rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+        }
+        .hero-name span {
+            color: var(--accent-blue);
+        }
+        .hero-tagline {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-soft);
+            margin: 0.5rem 0 1rem 0;
+        }
+        .hero-bio {
+            font-size: 1.05rem;
+            max-width: 520px;
+            color: var(--text-soft);
+            margin-bottom: 2rem;
+        }
+
+        /* ===== Buttons ===== */
+        .btn-primary-custom {
+            background: var(--accent-blue);
+            border: none;
+            color: #fff;
+            padding: 0.7rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all var(--transition-smooth);
+            box-shadow: 0 4px 16px rgba(74, 144, 226, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary-custom:hover {
+            background: var(--accent-hover);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(74, 144, 226, 0.35);
+        }
+        .btn-outline-custom {
+            background: transparent;
+            border: 2px solid var(--text-charcoal);
+            color: var(--text-charcoal);
+            padding: 0.65rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-outline-custom:hover {
+            background: var(--text-charcoal);
+            color: #fff;
+            transform: translateY(-2px);
+            border-color: var(--text-charcoal);
+        }
+
+        /* ===== Cards ===== */
+        .card-hover {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+            height: 100%;
+            overflow: hidden;
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(74, 144, 226, 0.15);
+        }
+        .card-hover .card-body {
+            padding: 1.75rem 1.75rem 2rem 1.75rem;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            background: rgba(74, 144, 226, 0.08);
+            color: var(--accent-blue);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.9rem;
+            border-radius: 50px;
+            letter-spacing: 0.02em;
+            margin: 0.15rem 0.25rem;
+            border: 1px solid rgba(74, 144, 226, 0.1);
+        }
+
+        /* ===== Skills ===== */
+        .skill-category-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-soft);
+            margin-bottom: 0.75rem;
+        }
+        .skill-chip {
+            display: inline-block;
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            padding: 0.3rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-soft);
+            margin: 0.2rem 0.3rem;
+            transition: all var(--transition-smooth);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .skill-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            background: rgba(74, 144, 226, 0.04);
+            transform: translateY(-2px);
+        }
+        .skill-chip.highlight {
+            background: rgba(74, 144, 226, 0.08);
+            border-color: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
+        }
+        .progress-skill {
+            height: 6px;
+            border-radius: 20px;
+            background: var(--border-subtle);
+            margin-top: 0.3rem;
+        }
+        .progress-skill .progress-bar-skill {
+            height: 100%;
+            border-radius: 20px;
+            background: var(--accent-blue);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* ===== Chart containers ===== */
+        .chart-container {
+            background: #fff;
+            border-radius: var(--radius-card);
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-subtle);
+            height: 100%;
+        }
+        .chart-container canvas {
+            max-height: 260px;
+            width: 100% !important;
+        }
+
+        /* ===== Code snippet ===== */
+        .code-snippet {
+            background: #f1f3f5;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--text-soft);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .code-snippet code {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+        }
+
+        /* ===== Contact ===== */
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .contact-info-item:last-child {
+            border-bottom: none;
+        }
+        .contact-info-item i {
+            width: 24px;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            background: #fff;
+            border-top: 1px solid var(--border-subtle);
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-soft);
+        }
+        .footer-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-off-white);
+            color: var(--text-soft);
+            transition: all var(--transition-smooth);
+            margin: 0 0.3rem;
+        }
+        .footer-social a:hover {
+            background: var(--accent-blue);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        /* ===== Animations (scroll) ===== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-up.delay-1 {
+            transition-delay: 0.05s;
+        }
+        .fade-up.delay-2 {
+            transition-delay: 0.10s;
+        }
+        .fade-up.delay-3 {
+            transition-delay: 0.15s;
+        }
+        .fade-up.delay-4 {
+            transition-delay: 0.20s;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .hero-name {
+                font-size: 2.8rem;
+            }
+            section {
+                padding: 4rem 0;
+            }
+            .section-title {
+                font-size: 1.9rem;
+            }
+        }
+        @media (max-width: 768px) {
+            #hero {
+                min-height: auto;
+                padding: 6rem 0 3.5rem 0;
+                text-align: center;
+            }
+            .hero-name {
+                font-size: 2.3rem;
+            }
+            .hero-bio {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .section-title {
+                font-size: 1.7rem;
+            }
+            .btn-primary-custom,
+            .btn-outline-custom {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.85rem;
+            }
+            .navbar-brand {
+                font-size: 1rem;
+            }
+            .navbar-brand small {
+                font-size: 0.6rem;
+            }
+            .chart-container canvas {
+                max-height: 200px;
+            }
+            .section-divider.centered {
+                margin: 0.5rem auto 1.2rem auto;
+            }
+        }
+        @media (max-width: 576px) {
+            .hero-name {
+                font-size: 1.9rem;
+            }
+            .hero-tagline {
+                font-size: 1rem;
+            }
+            .hero-bio {
+                font-size: 0.95rem;
+            }
+            section {
+                padding: 3rem 0;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Utilities */
+        .bg-soft {
+            background: var(--bg-light);
+        }
+        .text-accent {
+            color: var(--accent-blue);
+        }
+        .border-accent {
+            border-color: var(--accent-blue) !important;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        .gap-3 {
+            gap: 1rem;
+        }
+        .mt-6 {
+            margin-top: 4rem;
+        }
+        .mb-6 {
+            margin-bottom: 4rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== Scroll Progress ===== -->
+    <div id="scroll-progress"></div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="#hero">
+                Deena A C <small>| Embedded Software Engineer</small>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars" style="font-size:1.2rem; color:var(--text-charcoal);"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="#hero">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+    <div class="container position-relative">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-8 order-lg-1 order-2">
+                <div class="fade-up visible">
+                    <p class="text-accent fw-semibold mb-1" style="font-size:0.9rem; letter-spacing:0.06em;">
+                        <i class="fas fa-microchip me-1"></i> Embedded Systems · Firmware · RTOS
+                    </p>
+                    <h1 class="hero-name">
+                        Deena A C<br /><span>Embedded Software Engineer</span>
+                    </h1>
+                    <p class="hero-tagline">Firmware Development · RTOS · Edge Computing</p>
+                    <p class="hero-bio">
+                        B.Tech CSE (IoT) · CGPA 8.53 · Published researcher with experience in
+                        embedded C/C++, ESP32 architectures, and real-time systems.
+                        Passionate about building efficient, reliable firmware for consumer
+                        electronics, automotive, and industrial applications.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#resume" class="btn btn-primary-custom" onclick="downloadResume()">
+                            <i class="fas fa-file-pdf"></i> Download Resume
+                        </a>
+                        <a href="#contact" class="btn btn-outline-custom">
+                            <i class="fas fa-paper-plane"></i> Contact Me
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 order-lg-2 order-1 text-center text-lg-end">
+                <div class="fade-up visible delay-1">
+                    <!-- Tech badge decoration (no image) -->
+                    <div class="d-flex justify-content-center justify-content-lg-end gap-2 flex-wrap">
+                        <span class="tech-tag"><i class="fas fa-code me-1"></i> C/C++</span>
+                        <span class="tech-tag"><i class="fas fa-microchip me-1"></i>ESP32/Arduino</span>
+                        <span class="tech-tag"><i class="fas fa-tasks me-1"></i> FreeRTOS</span>
+                        <span class="tech-tag"><i class="fas fa-bolt me-1"></i> Low-Power</span>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="bg-soft">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6 fade-up">
+                <span class="text-accent fw-semibold" style="font-size:0.85rem; letter-spacing:0.06em;">ABOUT</span>
+                <h2 class="section-title">Building <span class="text-accent">reliable</span> embedded systems</h2>
+                <div class="section-divider"></div>
+                <p class="mb-3" style="font-size:1.05rem;">
+                    I'm an Embedded Software Engineer with a B.Tech in Computer Science &amp; Engineering (IoT)
+                    and hands-on experience in <strong>C/C++</strong>, <strong>ESP32</strong> architectures,
+                    and <strong>FreeRTOS</strong>. I design and implement efficient, low-power firmware for
+                    resource-constrained devices.
+                </p>
+                <p>
+                    My work spans sensor integration, communication protocols (I2C, SPI, UART, MQTT),
+                    and edge AI deployment on microcontrollers. I've developed smart building automation
+                    systems and adaptive NILM energy monitoring solutions, with publications in
+                    <strong>IEEE</strong> and <strong>Springer</strong>. I hold a registered patent for
+                    an edge-vision control architecture that improved building energy efficiency by 27%.
+                </p>
+                <p>
+                    I'm passionate about <strong>real-time systems, low-power design, and firmware
+                    architecture</strong>. I'm actively seeking embedded software engineering roles
+                    in consumer electronics, automotive, industrial automation, and semiconductor
+                    industries.
+                </p>
+                <div class="mt-4 d-flex flex-wrap gap-3">
+                    <div><i class="fas fa-graduation-cap text-accent me-2"></i> B.Tech CSE (IoT) · 8.53 CGPA</div>
+                    <div><i class="fas fa-award text-accent me-2"></i> IEEE RAS Hackathon 2<sup>nd</sup> Prize</div>
+                </div>
+            </div>
+            <div class="col-lg-6 fade-up delay-1">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="card-hover p-4 text-center" style="background:#fff;">
+                            <i class="fas fa-microchip" style="font-size:2.2rem; color:var(--accent-blue);"></i>
+                            <h5 class="mt-2 mb-0">Firmware</h5>
+                            <small class="text-muted">C/C++ · RTOS · BSP</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-hover p-4 text-center" style="background:#fff;">
+                            <i class="fas fa-bolt" style="font-size:2.2rem; color:var(--accent-blue);"></i>
+                            <h5 class="mt-2 mb-0">Low-Power</h5>
+                            <small class="text-muted">Energy Optimisation · Sleep Modes</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-hover p-4 text-center" style="background:#fff;">
+                            <i class="fas fa-code" style="font-size:2.2rem; color:var(--accent-blue);"></i>
+                            <h5 class="mt-2 mb-0">Embedded</h5>
+                            <small class="text-muted">PCB Design · Sensor Integration</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-hover p-4 text-center" style="background:#fff;">
+                            <i class="fas fa-network-wired" style="font-size:2.2rem; color:var(--accent-blue);"></i>
+                            <h5 class="mt-2 mb-0">Connectivity</h5>
+                            <small class="text-muted">BLE · Wi-Fi · CAN · HTTP</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SKILLS ===== -->
+<section id="skills">
+    <div class="container">
+        <div class="text-center fade-up">
+            <span class="text-accent fw-semibold" style="font-size:0.85rem; letter-spacing:0.06em;">EXPERTISE</span>
+            <h2 class="section-title">Technical <span class="text-accent">Toolkit</span></h2>
+            <p class="section-subtitle">Embedded software, RTOS, communication protocols, and Sensor fusion.</p>
+        </div>
+
+        <div class="row g-4 mt-2">
+            <!-- Left: Skill chips + radar chart -->
+            <div class="col-lg-7 fade-up">
+                <div class="row g-3">
+                    <!-- Languages -->
+                    <div class="col-12">
+                        <p class="skill-category-title"><i class="fas fa-code text-accent me-2"></i>Programming Languages</p>
+                        <div>
+                            <span class="skill-chip highlight">C</span>
+                            <span class="skill-chip highlight">C++</span>
+                            <span class="skill-chip highlight">Embedded C</span>
+                            <span class="skill-chip">Python</span>
+                            <span class="skill-chip">Java</span>
+                        </div>
+                    </div>
+                    <!-- Microcontrollers -->
+                    <div class="col-12">
+                        <p class="skill-category-title"><i class="fas fa-microchip text-accent me-2"></i>Microcontrollers &amp; SoCs</p>
+                        <div>
+                            
+                            <span class="skill-chip highlight">ESP32</span>
+                            
+                            <span class="skill-chip">Arduino</span>
+                        </div>
+                    </div>
+                    <!-- RTOS & Embedded Linux -->
+                    <div class="col-12">
+                        <p class="skill-category-title"><i class="fas fa-tasks text-accent me-2"></i>RTOS &amp; Embedded Linux</p>
+                        <div>
+                            <span class="skill-chip highlight">FreeRTOS</span>
+                            <span class="skill-chip">Linux</span>
+                            
+                        </div>
+                    </div>
+                    <!-- Protocols -->
+                    <div class="col-12">
+                        <p class="skill-category-title"><i class="fas fa-network-wired text-accent me-2"></i>Communication Protocols</p>
+                        <div>
+                            <span class="skill-chip highlight">I2C</span>
+                            <span class="skill-chip highlight">SPI</span>
+                            <span class="skill-chip highlight">UART</span>
+                            
+                            <span class="skill-chip">MQTT</span>
+                            <span class="skill-chip">BLE</span>
+                            <span class="skill-chip">Wi-Fi</span>
+                            <span class="skill-chip">HTTP</span>
+                        </div>
+                    </div>
+                    <!-- Tools -->
+                    <div class="col-12">
+                        <p class="skill-category-title"><i class="fas fa-tools text-accent me-2"></i>Tools &amp; Platforms</p>
+                        <div>
+                            <span class="skill-chip">Arduino IDE</span>
+                            
+                            <span class="skill-chip">VS Code</span>
+                            <span class="skill-chip">Git/GitHub</span>
+                            <span class="skill-chip">PlatformIO</span>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Radar chart -->
+            <div class="col-lg-5 fade-up delay-1">
+                <div class="chart-container">
+                    <h6 style="font-family:var(--font-heading); font-weight:600; font-size:0.9rem;" class="mb-2">
+                        <i class="fas fa-chart-pie text-accent me-2"></i>Skill Proficiency
+                    </h6>
+                    <canvas id="radarChart" width="300" height="260"></canvas>
+                </div>
+                <!-- small code snippet -->
+                
+            </div>
+        </div>
+
+        <!-- Progress bars row -->
+        <div class="row g-4 mt-3 fade-up">
+            <div class="col-md-3 col-6">
+                <div class="d-flex justify-content-between small fw-medium"><span>Embedded C/C++</span><span>92%</span></div>
+                <div class="progress-skill"><div class="progress-bar-skill" style="width:92%;"></div></div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="d-flex justify-content-between small fw-medium"><span>ESP32</span><span>85%</span></div>
+                <div class="progress-skill"><div class="progress-bar-skill" style="width:85%;"></div></div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="d-flex justify-content-between small fw-medium"><span>FreeRTOS</span><span>78%</span></div>
+                <div class="progress-skill"><div class="progress-bar-skill" style="width:78%;"></div></div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="d-flex justify-content-between small fw-medium"><span>Protocols</span><span>82%</span></div>
+                <div class="progress-skill"><div class="progress-bar-skill" style="width:82%;"></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PROJECTS ===== -->
+<section id="projects" class="bg-soft">
+    <div class="container">
+        <div class="text-center fade-up">
+            <span class="text-accent fw-semibold" style="font-size:0.85rem; letter-spacing:0.06em;">PORTFOLIO</span>
+            <h2 class="section-title">Embedded <span class="text-accent">Projects</span></h2>
+            <p class="section-subtitle">Firmware development, RTOS, edge computing, and industrial automation.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Project 1: Adaptive NILM -->
+            <div class="col-md-6 col-lg-6 fade-up">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            Adaptive NILM with Human-in-the-Loop ML
+                        </h5>
+                        <p class="text-muted small mb-2">Jul 2025 – May 2026</p>
+                        <p style="font-size:0.95rem;">
+                            Non-intrusive load monitoring firmware using ESP32 and current/voltage sensors.
+                            Implemented active learning classification for appliance disaggregation,
+                            achieving <strong>23%</strong> better energy savings than conventional systems.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">ESP32</span>
+                            <span class="tech-tag">PZEM-004T</span>
+                            <span class="tech-tag">Embedded C</span>
+                            <span class="tech-tag">FreeRTOS</span>
+                            <span class="tech-tag">MQTT</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> 23% energy savings</span>
+                            <span class="badge bg-light text-dark border"><a href="https://ieeexplore.ieee.org/document/11448467" class="text-decoration-none text-dark"><i class="fas fa-check-circle text-accent me-1"></i> IEEE publication</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2: Building Automation -->
+            <div class="col-md-6 col-lg-6 fade-up delay-1">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            Vision-Based Building Automation (YOLOv8 + ESP32)
+                        </h5>
+                        <p class="text-muted small mb-2">Jul 2025 – Dec 2025</p>
+                        <p style="font-size:0.95rem;">
+                            Edge AI firmware for ESP32 with YOLOv8 object detection. Dynamically controls
+                            HVAC and lighting based on occupancy, achieving <strong>27%</strong> energy savings
+                            with low false-positive rates.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">ESP32</span>
+                            <span class="tech-tag">YOLOv8</span>
+                            <span class="tech-tag">OpenCV</span>
+                            <span class="tech-tag">Embedded C</span>
+                            <span class="tech-tag">Wi-Fi</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> 27% energy improvement</span>
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Springer publication</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3: Vision Track Systems (Patent) -->
+            <div class="col-md-6 col-lg-6 fade-up delay-2">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            Vision Track Systems <span class="badge bg-accent text-white ms-1" style="font-weight:400; font-size:0.6rem;">Patent</span>
+                        </h5>
+                        <p class="text-muted small mb-2">Filed Apr 2026 · Published Jun 2026</p>
+                        <p style="font-size:0.95rem;">
+                            Edge-vision control architecture using YOLOv8n and PyTorch for real-time
+                            occupant density detection. Regulates lighting and cooling autonomously,
+                            achieving <strong>27%</strong> energy efficiency improvement.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">YOLOv8n</span>
+                            <span class="tech-tag">PyTorch</span>
+                            <span class="tech-tag">ESP32</span>
+                            <span class="tech-tag">Edge AI</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Indian Patent</span>
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Energy efficiency</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 4: Hybrid Energy Harvesting -->
+            <div class="col-md-6 col-lg-6 fade-up delay-3">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            Experimental Investigation for Hybrid Energy Harvesting System for Remote Monitoring Applications
+                        </h5>
+                        <p class="text-muted small mb-2">Jun 2023 - Nov 2023</p>
+                        <p style="font-size:0.95rem;">
+                            Firmware development for energy harvesting systems using solar and vibration
+                            sources. Designed low-power data acquisition and wireless transmission for
+                            remote industrial monitoring applications.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">Energy Harvesting</span>
+                            <span class="tech-tag">Low-Power</span>
+                            <span class="tech-tag">Wireless Sensor Networks</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><a href="https://ieeexplore.ieee.org/document/10830445" class="text-decoration-none text-dark"><i class="fas fa-check-circle text-accent me-1"></i> IEEE publication</a></span>
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Industrial IoT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== NEW PROJECT 5: IoT Smart Plug ===== -->
+            <div class="col-md-6 col-lg-6 fade-up">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            IoT-Based Smart Plug with Dual Control (Manual & Remote)
+                        </h5>
+                        <p class="text-muted small mb-2">Dec 2023 - Apr 2024</p>
+                        <p style="font-size:0.95rem;">
+                            IoT-enabled smart plug allowing users to control electrical appliances through both manual switches and a smartphone app (Blynk). Features real-time monitoring, seamless synchronization, and remote access via Blynk Cloud.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">ESP8266</span>
+                            <span class="tech-tag">Blynk</span>
+                            <span class="tech-tag">Relay</span>
+                            <span class="tech-tag">Voltage Sensor</span>
+                            <span class="tech-tag">Wi-Fi</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Dual Control</span>
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Remote Monitoring</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== NEW PROJECT 6: Dust & Noise Monitoring ===== -->
+            <div class="col-md-6 col-lg-6 fade-up delay-1">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            IoT-Enabled Real-Time Dust & Noise Pollution Monitoring Framework
+                        </h5>
+                        <p class="text-muted small mb-2">Dec 2023 - Apr 2024</p>
+                        <p style="font-size:0.95rem;">
+                            Industrial IoT system for cement plants to track PM2.5 and noise levels. Features edge alerting (buzzer/LED), local database persistence, and an interactive Flask web dashboard with dynamic charts and Excel export.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">ESP32</span>
+                            <span class="tech-tag">PM2.5 Sensor</span>
+                            <span class="tech-tag">Flask</span>
+                            <span class="tech-tag">SQLite</span>
+                            <span class="tech-tag">Chart.js</span>
+                            <span class="tech-tag">HTTP</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Real-Time Alerts</span>
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Excel Export</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== NEW PROJECT 7: Solar-Powered Vermicomposting ===== -->
+            <div class="col-md-6 col-lg-6 fade-up delay-2">
+                <div class="card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-family:var(--font-heading); font-weight:600; font-size:1.15rem;">
+                            Solar-Powered IoT System for Vermicomposting Monitoring & Control
+                        </h5>
+                        <p class="text-muted small mb-2">Dec 2024 -Apr 2025</p>
+                        <p style="font-size:0.95rem;">
+                            Smart monitoring system for vermicomposting using ESP32 and multiple sensors. Automates water pump, ventilation fan, and gas alerts. Powered by 5V solar panel with 18650 battery backup. Web dashboard for real-time visualization and data export.
+                        </p>
+                        <div class="mb-2">
+                            <span class="tech-tag">ESP32</span>
+                            <span class="tech-tag">DHT11</span>
+                            <span class="tech-tag">Gas Sensor</span>
+                            <span class="tech-tag">Soil Moisture</span>
+                            <span class="tech-tag">Solar Panel</span>
+                            <span class="tech-tag">Flask</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Solar-Powered</span>
+                            <span class="badge bg-light text-dark border"><i class="fas fa-check-circle text-accent me-1"></i> Automated Control</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== EXPERIENCE ===== -->
+<section id="experience">
+    <div class="container">
+        <div class="text-center fade-up">
+            <span class="text-accent fw-semibold" style="font-size:0.85rem; letter-spacing:0.06em;">EXPERIENCE</span>
+            <h2 class="section-title">Internships &amp; <span class="text-accent">Industry Exposure</span></h2>
+            <p class="section-subtitle">Hands-on embedded software development and systems engineering.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8 fade-up">
+                <div class="card-hover" style="background:#fff;">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 style="font-family:var(--font-heading); font-weight:600; font-size:1.2rem;">
+                                    Electric Vehicle Systems Intern
+                                </h5>
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-building me-1"></i> Kocay · Remote
+                                </p>
+                            </div>
+                            <span class="badge bg-light text-dark border px-3 py-2">Jun 2026 – Jul 2026</span>
+                        </div>
+                        <ul style="padding-left:1.2rem; font-size:0.95rem;">
+                            <li>Developed embedded firmware for BMS monitoring and diagnostics using C and CAN protocol.</li>
+                            <li>Analyzed powertrain subsystems including motor controllers, inverters, and regenerative braking.</li>
+                            <li>Simulated and optimized energy management strategies for EV applications.</li>
+                            <li>Collaborated on hardware-in-the-loop testing for vehicle control units.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publications / Achievements -->
+        <div class="row g-4 mt-4">
+            <div class="col-md-6 fade-up">
+                <div class="card-hover" style="background:#fff; padding:1.5rem;">
+                    <h6 style="font-family:var(--font-heading); font-weight:600;">
+                        <i class="fas fa-file-alt text-accent me-2"></i>Publications
+                    </h6>
+                    <ul style="padding-left:1.2rem; font-size:0.9rem;">
+                        <li><strong>IEEE GCwCN 2025</strong> – Adaptive NILM with Human-in-the-Loop ML</li>
+                        <li><strong>Springer ICICCD 2025</strong> – Building Automation using YOLOv8 &amp; ESP32</li>
+                        <li><strong>IEEE ICCSC 2024</strong> – Hybrid Energy Harvesting for Remote Monitoring</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 fade-up delay-1">
+                <div class="card-hover" style="background:#fff; padding:1.5rem;">
+                    <h6 style="font-family:var(--font-heading); font-weight:600;">
+                        <i class="fas fa-trophy text-accent me-2"></i>Awards &amp; Achievements
+                    </h6>
+                    <ul style="padding-left:1.2rem; font-size:0.9rem;">
+                        <li><strong>IEEE RAS Hackathon</strong> – 2<sup>nd</sup> Prize for embedded innovation</li>
+                        <li><strong>Ignite India</strong> – Wadhwani Foundation fellowship</li>
+                        <li><strong>Indian Patent</strong> – Vision Track Systems (Filed &amp; Published)</li>
+                        <li>Presented at 3 international IEEE/Springer conferences</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CERTIFICATIONS & ACHIEVEMENTS (compact) ===== -->
+<section id="certifications" class="bg-soft">
+    <div class="container">
+        <div class="text-center fade-up">
+            <span class="text-accent fw-semibold" style="font-size:0.85rem; letter-spacing:0.06em;">CREDENTIALS</span>
+            <h2 class="section-title">Certifications &amp; <span class="text-accent">Honors</span></h2>
+        </div>
+        <div class="row g-3 justify-content-center mt-2">
+            <div class="col-md-4 col-6 fade-up">
+                <div class="text-center p-3 bg-white rounded-3 shadow-sm border" style="height:100%;">
+                    <i class="fas fa-certificate text-accent" style="font-size:1.6rem;"></i>
+                    <p class="fw-semibold mt-2 mb-0" style="font-size:0.9rem;">Java Full Stack</p>
+                    <small class="text-muted">Wipro TalentNext</small>
+                </div>
+            </div>
+            <div class="col-md-4 col-6 fade-up delay-1">
+                <div class="text-center p-3 bg-white rounded-3 shadow-sm border" style="height:100%;">
+                    <i class="fas fa-microchip text-accent" style="font-size:1.6rem;"></i>
+                    <p class="fw-semibold mt-2 mb-0" style="font-size:0.9rem;">Embedded Systems with Arduino</p>
+                    <small class="text-muted">GeeksforGeeks</small>
+                </div>
+            </div>
+            <div class="col-md-4 col-6 fade-up delay-2">
+                <div class="text-center p-3 bg-white rounded-3 shadow-sm border" style="height:100%;">
+                    <i class="fas fa-code text-accent" style="font-size:1.6rem;"></i>
+                    <p class="fw-semibold mt-2 mb-0" style="font-size:0.9rem;">Introduction to C · C++ Intermediate</p>
+                    <small class="text-muted">Sololearn</small>
+                </div>
+            </div>
+        </div>
+        <!-- Bar chart -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-6 fade-up">
+                <div class="chart-container">
+                    <h6 style="font-family:var(--font-heading); font-weight:600; font-size:0.9rem;" class="mb-2">
+                        <i class="fas fa-chart-bar text-accent me-2"></i>Achievement Areas
+                    </h6>
+                    <canvas id="barChart" width="300" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+    <div class="container">
+        <div class="text-center fade-up">
+            <span class="text-accent fw-semibold" style="font-size:0.85rem; letter-spacing:0.06em;">CONNECT</span>
+            <h2 class="section-title">Get in <span class="text-accent">Touch</span></h2>
+            <p class="section-subtitle">Open to embedded software engineering opportunities and collaborations.</p>
+        </div>
+
+        <div class="row g-5 justify-content-center">
+            <div class="col-lg-5 fade-up">
+                <div class="bg-white p-4 rounded-4 shadow-sm border" style="height:100%;">
+                    <h5 style="font-family:var(--font-heading); font-weight:600;">Contact Information</h5>
+                    <div class="mt-3">
+                        <div class="contact-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div><a href="mailto:7deena19@gmail.com">7deena19@gmail.com</a></div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-phone"></i>
+                            <div><a href="tel:+919043291234">+91 90432 91234</a></div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>Dindigul, Tamil Nadu, 624206</div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fab fa-github"></i>
+                            <div><a href="https://github.com/acdeena1994" target="_blank">github.com/acdeena1994</a></div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fab fa-linkedin-in"></i>
+                            <div><a href="https://linkedin.com/in/acdeena1994" target="_blank">linkedin.com/in/acdeena1994</a></div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="#resume" class="btn btn-primary-custom" onclick="downloadResume()">
+                            <i class="fas fa-file-pdf"></i> Download Resume
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 fade-up delay-1">
+                <div class="bg-white p-4 rounded-4 shadow-sm border" style="height:100%;">
+                    <h5 style="font-family:var(--font-heading); font-weight:600;">Send a Message</h5>
+                    <form id="contactForm" onsubmit="return handleFormSubmit(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Your Name</label>
+                            <input type="text" class="form-control" id="formName" placeholder="Full name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Email Address</label>
+                            <input type="email" class="form-control" id="formEmail" placeholder="name@example.com" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Message</label>
+                            <textarea class="form-control" id="formMessage" rows="4" placeholder="Your message..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                        <div id="formFeedback" class="mt-2 small text-center"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div class="footer-social mb-2">
+            <a href="https://github.com/acdeena1994" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com/in/acdeena1994" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="mailto:7deena19@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p class="mb-0">
+            &copy; 2026 Acdeena. Built with <i class="fas fa-heart text-accent" style="font-size:0.8rem;"></i>
+            using HTML, CSS, JS &amp; Bootstrap.
+        </p>
+        <small class="text-muted">Embedded Software · Firmware · RTOS · Edge Computing</small>
+    </div>
+</footer>
+
+<!-- ===== Bootstrap 5 JS bundle ===== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+</script>
+<!-- ===== Chart.js 4 ===== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+</script>
+
+<script>
+    /* ======================================================
+       Vanilla JavaScript
+       ====================================================== */
+
+    // ---- 1. Scroll Progress ----
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = progress + '%';
+    });
+
+    // ---- 2. Navbar active link on scroll ----
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    function updateActiveNav() {
+        let current = '';
+        const scrollPos = window.scrollY + 120;
+        sections.forEach(section => {
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            if (scrollPos >= top && scrollPos < top + height) {
+                current = section.getAttribute('id');
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    }
+    window.addEventListener('scroll', updateActiveNav);
+    window.addEventListener('load', updateActiveNav);
+
+    // ---- 3. Navbar shadow on scroll ----
+    const navbar = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // ---- 4. Scroll-triggered fade-up (Intersection Observer) ----
+    const fadeElements = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -20px 0px'
+    });
+    fadeElements.forEach(el => observer.observe(el));
+
+    // ---- 5. Progress bars (animate on scroll) ----
+    const progressBars = document.querySelectorAll('.progress-bar-skill');
+    const progressObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 120);
+            }
+        });
+    }, { threshold: 0.3 });
+    progressBars.forEach(bar => progressObserver.observe(bar));
+
+    // ---- 6. Charts ----
+    // Radar Chart
+    const radarCtx = document.getElementById('radarChart').getContext('2d');
+    new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Embedded C/C++', 'ESP32', 'FreeRTOS', 'Protocols', 'Edge AI', 'System Arch'],
+            datasets: [{
+                label: 'Proficiency',
+                data: [92, 85, 75, 82, 60, 76],
+                backgroundColor: 'rgba(74, 144, 226, 0.15)',
+                borderColor: '#4A90E2',
+                borderWidth: 2,
+                pointBackgroundColor: '#4A90E2',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    min: 0,
+                    max: 100,
+                    ticks: { stepSize: 20, font: { size: 9, family: 'Inter' } },
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    angleLines: { color: 'rgba(0,0,0,0.06)' },
+                    pointLabels: { font: { size: 10, family: 'Inter', weight: '500' } }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Publications', 'Patents', 'Certifications', 'Conferences'],
+            datasets: [{
+                label: 'Count',
+                data: [3, 1, 4, 3],
+                backgroundColor: ['#4A90E2', '#6ba4f0', '#4A90E2', '#8bb8f5', '#4A90E2'],
+                borderRadius: 6,
+                barPercentage: 0.6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, font: { size: 10, family: 'Inter' } },
+                    grid: { color: 'rgba(0,0,0,0.04)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10, family: 'Inter', weight: '500' } }
+                }
+            }
+        }
+    });
+
+    // ---- 7. Contact form (frontend only) ----
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        const name = document.getElementById('formName').value.trim();
+        const email = document.getElementById('formEmail').value.trim();
+        const msg = document.getElementById('formMessage').value.trim();
+        const feedback = document.getElementById('formFeedback');
+
+        if (!name || !email || !msg) {
+            feedback.innerHTML = '<span class="text-danger">Please fill all fields.</span>';
+            return false;
+        }
+        if (!email.includes('@') || !email.includes('.')) {
+            feedback.innerHTML = '<span class="text-danger">Please enter a valid email.</span>';
+            return false;
+        }
+
+        feedback.innerHTML =
+            '<span class="text-accent"><i class="fas fa-check-circle"></i> Thanks, ' + name +
+            '! Your message was sent (demo).</span>';
+        document.getElementById('contactForm').reset();
+        setTimeout(() => { feedback.innerHTML = ''; }, 5000);
+        return false;
+    }
+
+    // ---- 8. Download Resume ----
+    function downloadResume() {
+        const link = document.createElement('a');
+        link.href = 'resume.pdf';
+        link.download = 'Acdeena_Embedded_Resume.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // ---- 9. Smooth nav clicks ----
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const target = this.getAttribute('href');
+            if (target && target.startsWith('#')) {
+                const el = document.querySelector(target);
+                if (el) {
+                    e.preventDefault();
+                    const offset = 70;
+                    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                    const collapse = document.getElementById('navMenu');
+                    const bsCollapse = bootstrap.Collapse.getInstance(collapse);
+                    if (bsCollapse) bsCollapse.hide();
+                }
+            }
+        });
+    });
+
+    console.log('🚀 Portfolio ready — Embedded Software Engineer');
+</script>
+
+</body>
+</html>
